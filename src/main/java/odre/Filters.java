@@ -20,15 +20,15 @@ class Filters {
 	private static final Query RESTRICTIONS_QUERY = QueryFactory.create(RESTRICTIONS_QUERY_STRING);
 
 	// Constraints
-	private static final String CONSTRAINTS_QUERY_REPLACEMENT = "#RULE_ID#";
+	private static final String QUERY_REPLACEMENT = "#RULE_ID#";
 	private static final String RESTRICTIONS_QUERY_ARG_OPERATOR = "operator";
 	private static final String RESTRICTIONS_QUERY_ARG_LEFTOPERAND = "left_operand";
 	private static final String RESTRICTIONS_QUERY_ARG_RIGHTOPERAND = "right_operand";
 	private static final String CONSTRAINTS_QUERY_STRING = "SELECT DISTINCT ?operator ?left_operand ?right_operand WHERE { #RULE_ID# <http://www.w3.org/ns/odrl/2/operator>  ?operator;  <http://www.w3.org/ns/odrl/2/leftOperand> ?left_operand ;  <http://www.w3.org/ns/odrl/2/rightOperand> ?right_operand . }";
 
 	// Actions
-	private static final String QUERY_ACTION = "SELECT DISTINCT ?action WHERE { #RULE_ID# <http://www.w3.org/ns/odrl/2/action>  ?action . }";
-
+	private static final String ACTION_QUERY_STRING = "SELECT DISTINCT ?action WHERE { #RULE_ID# <http://www.w3.org/ns/odrl/2/action>  ?action . }";
+	private static final String ACTION_QUERY_ARG = "?action";
 	
 	private Filters() {
 		// empty
@@ -50,7 +50,7 @@ class Filters {
 	public static List<RDFNode[]> constraints(Model model, RDFNode restriction) throws EnforceException {
 		List<RDFNode[]> restrictions = new ArrayList<>();
 		// Instantiate CONSTRAINTS QUEY
-		String constraintsQueryInstantiated = CONSTRAINTS_QUERY_STRING.replace(CONSTRAINTS_QUERY_REPLACEMENT, restriction.toString());
+		String constraintsQueryInstantiated = CONSTRAINTS_QUERY_STRING.replace(QUERY_REPLACEMENT, restriction.toString());
 		
 		Query constraintsQuery = QueryFactory.create(constraintsQueryInstantiated);
 	    QueryExecution qe = QueryExecutionFactory.create(constraintsQuery, model);
@@ -68,5 +68,22 @@ class Filters {
 	    if(restrictions.isEmpty())
 	    	throw EnforceException.create(model);
 	    return restrictions;
+	}
+
+	public static String action(Model model, RDFNode restriction) {
+		String action = null;
+		// Instantiate ACTION QUEY
+		String actionQueryInstantiated = ACTION_QUERY_STRING.replace(QUERY_REPLACEMENT, restriction.toString());
+		
+		Query actionQuery = QueryFactory.create(actionQueryInstantiated);
+	    QueryExecution qe = QueryExecutionFactory.create(actionQuery, model);
+	    ResultSet rs = qe.execSelect();
+	    // Gather constraints
+	    while(rs.hasNext()){
+	    	QuerySolution querySolution = rs.nextSolution();
+	    	action = querySolution.get(ACTION_QUERY_ARG).toString();    
+	    }
+	    qe.close(); 
+	    return action;
 	}
 }

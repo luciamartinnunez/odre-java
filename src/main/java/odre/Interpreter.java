@@ -2,10 +2,6 @@ package odre;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
@@ -15,7 +11,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.sparql.function.FunctionRegistry;
 import org.apache.jena.util.PrintUtil;
 
 class Interpreter {
@@ -24,11 +19,15 @@ class Interpreter {
 	private static final String TRANSFORM_JOIN = " && ";
 	private static final String BIND_ARG = "?bind";
 	static {
-//		PrintUtil.registerPrefix("odrl", "http://www.w3.org/ns/odrl/2/");
-		PrintUtil.removePrefix("xsd");//("xsd", "http://www.w3.org/2001/XMLSchema#");
+		PrintUtil.removePrefix("xsd");
+	}
+	
+	public static String transformAction(String action) {
+		String interpretableAction = Wrapper.wrapURINode(ResourceFactory.createResource(action), true);
+		return Wrapper.wrapQuery(interpretableAction);
 	}
 
-	public static String transform(List<RDFNode[]> constraints) throws EnforceException {
+	public static String transformPolicy(List<RDFNode[]> constraints) throws EnforceException {
 		List<String> triplePatterns = new ArrayList<>();
 		for(int index=0; index < constraints.size(); index++) {
 			RDFNode[] constraint = constraints.get(index);
@@ -44,9 +43,9 @@ class Interpreter {
 		String leftOperandNode = transformNode(leftOperand, true);
 		String rightOperandNode = transformNode(rightOperand, true);
 		
-		Functions.checkSupport(operatorNode);
-		Functions.checkSupport(leftOperandNode);
-		Functions.checkSupport(rightOperandNode);
+		Extensions.checkSupport(operatorNode);
+		Extensions.checkSupport(leftOperandNode);
+		Extensions.checkSupport(rightOperandNode);
 		
 		return Wrapper.wrapConstraint(operatorNode, leftOperandNode, rightOperandNode);
 
@@ -66,20 +65,27 @@ class Interpreter {
 		return node;
 	}
 
-	public static boolean evaluate(String interpretablePolicy) {
+	
+	
+	public static Object evaluate(String interpretablePolicy) {
 		Model model = ModelFactory.createDefaultModel();
 		QueryExecution qe = QueryExecutionFactory.create(interpretablePolicy, model);
 		ResultSet rs = qe.execSelect();
 		// Gather enforcement result
-		boolean enforced = false;
+		Object enforced = null;
 		while (rs.hasNext()) {
 			RDFNode retriction = rs.nextSolution().get(BIND_ARG);
 			if(retriction!=null)
-				enforced = retriction.asLiteral().getBoolean();
+				enforced = retriction.asLiteral().getValue();
 		}
 		qe.close();
+		//TODO: si enforced es null lanzar excepción, lo mas probable es que un argumento de la politica sea incorrecto
 		return enforced;
 	}
+	
+	
+	
+	
 
 	private class Wrapper {
 
@@ -124,4 +130,8 @@ class Interpreter {
 		}
 
 	}
+
+
+
+	
 }
