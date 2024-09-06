@@ -36,7 +36,7 @@ public class TestBasic {
 	private static String fileResults = "./results.csv";
 
 	private static boolean experimentalMode = true;
-	
+	private static boolean warmup = true;
 	
 	private static String readPolicy(String name) {
 		
@@ -64,6 +64,12 @@ public class TestBasic {
 					results = new ArrayList<>();
 				results.add(finish);
 				runningTimeResults.put(name, results);
+				if(warmup) {
+					//skip first result
+					index -= 1;
+					warmup = false;
+					results.remove(0);
+				}
 			}
 		} else {
 			usage = odre.enforce(policy, interpolations);

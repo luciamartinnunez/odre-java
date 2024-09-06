@@ -25,7 +25,6 @@ class Extensions {
 		register("http://www.w3.org/ns/odrl/2/dateTime", DateTime.class);
 		// Actions
 		
-		
 		// Extensions
 		register("https://w3id.org/def/odre-time#date", Date.class);
 		register("https://w3id.org/def/odre-time#time", Time.class);
