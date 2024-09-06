@@ -2,12 +2,12 @@ package odre;
 
 import org.apache.jena.sparql.function.FunctionRegistry;
 
-import odre.actions.Display;
-import odre.actions.Distribute;
-import odre.operands.Date;
-import odre.operands.DateTime;
-import odre.operands.Time;
-import odre.operators.Logical;
+import odre.extension.demo.DummyRead;
+import odre.extension.odrl.DateTime;
+import odre.extension.odrl.Logical;
+import odre.extension.time.Between;
+import odre.extension.time.Date;
+import odre.extension.time.Time;
 
 
 class Extensions {
@@ -16,6 +16,7 @@ class Extensions {
 		// Operators
 		register("http://www.w3.org/ns/odrl/2/eq", Logical.class);
 		register("http://www.w3.org/ns/odrl/2/nteq", Logical.class);
+		register("http://www.w3.org/ns/odrl/2/neg", Logical.class);  // TODO: remove when issue https://github.com/w3c/poe/issues/311
 		register("http://www.w3.org/ns/odrl/2/gt", Logical.class);
 		register("http://www.w3.org/ns/odrl/2/gteq", Logical.class);
 		register("http://www.w3.org/ns/odrl/2/lt", Logical.class);
@@ -23,11 +24,14 @@ class Extensions {
 		// Operands
 		register("http://www.w3.org/ns/odrl/2/dateTime", DateTime.class);
 		// Actions
-		register("http://www.w3.org/ns/odrl/2/display", Display.class);
-		register("http://www.w3.org/ns/odrl/2/distribute", Distribute.class);
+		
+		
 		// Extensions
-		register("https://w3id.org/def/odre-time/date", Date.class);
-		register("https://w3id.org/def/odre-time/time", Time.class);
+		register("https://w3id.org/def/odre-time#date", Date.class);
+		register("https://w3id.org/def/odre-time#time", Time.class);
+		register("https://w3id.org/def/odre-time#between", Between.class);
+		
+		register("https://w3id.org/def/odre-demo#dummy_read", DummyRead.class);
 		
 	}
 	

@@ -38,8 +38,8 @@ public class TestInterpolation {
 	@Test
 	public void test01() throws EnforceException {
 		String policy = readPolicy("interopolate-variables-1.json");
-		Map<String,String> output = ODRE.enforce(policy, null);
-		assertTrue(ODRE.enforce(policy, null).keySet().contains("http://www.w3.org/ns/odrl/2/display"));
+		Map<String,String> output = new ODRE().enforce(policy, null);
+		assertTrue(output.keySet().contains("http://www.w3.org/ns/odrl/2/display"));
 	}
 	
 	@DisplayName("Test 02: testing interpolation engine using a variable with value")
@@ -48,7 +48,7 @@ public class TestInterpolation {
 		String policy = readPolicy("interopolate-variables-2.json");
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("datetime", "2024-07-04");
-		assertTrue(ODRE.enforce(policy, variables).keySet().contains("http://www.w3.org/ns/odrl/2/display"));
+		assertTrue(new ODRE().enforce(policy, variables).keySet().contains("http://www.w3.org/ns/odrl/2/display"));
 
 	}
 	
@@ -58,7 +58,7 @@ public class TestInterpolation {
 		String policy = readPolicy("interopolate-variables-3.json");
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("datetime", new SampleClass());
-		assertTrue(ODRE.enforce(policy, variables).keySet().contains("http://www.w3.org/ns/odrl/2/display"));
+		assertTrue(new ODRE().enforce(policy, variables).keySet().contains("http://www.w3.org/ns/odrl/2/display"));
 	}
 	
 	public class SampleClass {

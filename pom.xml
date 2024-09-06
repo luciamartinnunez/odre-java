@@ -4,8 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>odre.framework</groupId>
 	<artifactId>odre-core</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.1</version>
 	<name>ODRE library</name>
+
+
+
+		 <properties>
+		    <maven.compiler.source>17</maven.compiler.source>
+		    <maven.compiler.target>17</maven.compiler.target>
+		  </properties>
 
 
 	<dependencies>
@@ -21,23 +28,14 @@
 			<artifactId>jena-arq</artifactId>
 			<version>5.0.0</version>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.33</version>
 		</dependency>
-		<!-- Logging: -->
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-api</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tinylog</groupId>
-			<artifactId>tinylog-impl</artifactId>
-			<version>2.5.0</version>
-		</dependency>
+	
 	</dependencies>
 
 	<build>

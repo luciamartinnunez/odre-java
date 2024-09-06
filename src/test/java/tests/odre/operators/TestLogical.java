@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 
-import odre.operators.Logical;
+import odre.extension.odrl.Logical;
 
 public class TestLogical {
 

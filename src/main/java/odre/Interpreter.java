@@ -6,7 +6,6 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -15,12 +14,18 @@ import org.apache.jena.util.PrintUtil;
 
 class Interpreter {
 
+	private Interpreter() {
+		//super()
+	}
+	
 	// Transform
 	private static final String TRANSFORM_JOIN = " && ";
 	private static final String BIND_ARG = "?bind";
 	static {
 		PrintUtil.removePrefix("xsd");
 	}
+
+	
 	
 	public static String transformAction(String action) {
 		String interpretableAction = Wrapper.wrapURINode(ResourceFactory.createResource(action), true);
@@ -29,7 +34,7 @@ class Interpreter {
 
 	public static String transformPolicy(List<RDFNode[]> constraints) throws EnforceException {
 		List<String> triplePatterns = new ArrayList<>();
-		for(int index=0; index < constraints.size(); index++) {
+		for (int index = 0; index < constraints.size(); index++) {
 			RDFNode[] constraint = constraints.get(index);
 			String triplePattern = transformConstraint(constraint[0], constraint[1], constraint[2]);
 			triplePatterns.add(triplePattern);
@@ -38,15 +43,16 @@ class Interpreter {
 		return Wrapper.wrapQuery(bindOperators);
 	}
 
-	private static String transformConstraint(RDFNode operator, RDFNode leftOperand, RDFNode rightOperand) throws EnforceException {
+	private static String transformConstraint(RDFNode operator, RDFNode leftOperand, RDFNode rightOperand)
+			throws EnforceException {
 		String operatorNode = transformNode(operator, false);
 		String leftOperandNode = transformNode(leftOperand, true);
 		String rightOperandNode = transformNode(rightOperand, true);
-		
+
 		Extensions.checkSupport(operatorNode);
 		Extensions.checkSupport(leftOperandNode);
 		Extensions.checkSupport(rightOperandNode);
-		
+
 		return Wrapper.wrapConstraint(operatorNode, leftOperandNode, rightOperandNode);
 
 	}
@@ -57,7 +63,7 @@ class Interpreter {
 			Literal literalOperand = operand.asLiteral();
 			Resource datatype = ResourceFactory.createResource(literalOperand.getDatatype().getURI());
 			String prettyDatatype = Wrapper.wrapURINode(datatype, false);
-			
+
 			node = Wrapper.wrapLiteralNode(prettyDatatype, literalOperand.getString());
 		} else {
 			node = Wrapper.wrapURINode(operand, isOperand);
@@ -65,29 +71,28 @@ class Interpreter {
 		return node;
 	}
 
-	
-	
-	public static Object evaluate(String interpretablePolicy) {
-		Model model = ModelFactory.createDefaultModel();
-		QueryExecution qe = QueryExecutionFactory.create(interpretablePolicy, model);
-		ResultSet rs = qe.execSelect();
-		// Gather enforcement result
+	public static Object evaluate(String interpretablePolicy) throws EnforceException {
 		Object enforced = null;
-		while (rs.hasNext()) {
-			RDFNode retriction = rs.nextSolution().get(BIND_ARG);
-			if(retriction!=null)
-				enforced = retriction.asLiteral().getValue();
+		try (QueryExecution qe = QueryExecutionFactory.create(interpretablePolicy, ModelFactory.createDefaultModel())){
+			ResultSet rs = qe.execSelect();
+			// Gather enforcement result
+			while (rs.hasNext()) {
+				RDFNode retriction = rs.nextSolution().get(BIND_ARG);
+				if (retriction != null)
+					enforced = retriction.asLiteral().getValue();
+				if (retriction == null)
+					throw new EnforceException("Error evaluating literal in constaints, literal does not conform to datatype provided");
+			}
+			rs.close();
+		} catch (Exception e) {
+			throw new EnforceException(e.getMessage());
 		}
-		qe.close();
-		//TODO: si enforced es null lanzar excepción, lo mas probable es que un argumento de la politica sea incorrecto
+		if (enforced == null)
+			throw new EnforceException("An exception happened ");
 		return enforced;
 	}
-	
-	
-	
-	
 
-	private class Wrapper {
+	private static class Wrapper {
 
 		// Transform constraints
 		private static final String TRANSFORM_CONSTRAINT_CONSTANT_1 = "(";
@@ -111,7 +116,7 @@ class Interpreter {
 			StringBuilder wrappedNode = new StringBuilder(PrintUtil.print(node)); // Print.print(node)
 			if (isOperand)
 				wrappedNode.append(TRANSFORM_CONSTRAINT_CONSTANT_5);
-			return  wrappedNode.toString();
+			return wrappedNode.toString();
 		}
 
 		private static String wrapLiteralNode(String datatype, String value) {
@@ -131,7 +136,4 @@ class Interpreter {
 
 	}
 
-
-
-	
 }
