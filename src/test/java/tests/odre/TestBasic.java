@@ -56,7 +56,7 @@ public class TestBasic {
 		Map<String, String> usage = null;
 		if (experimentalMode) {
 			int iteration = 0;
-			for (int index = 0; index < numberOfExecutions; index++) {
+			for (int index = 0; index < numberOfExecutions+warmup; index++) {
 
 				long start = System.currentTimeMillis();
 				usage = odre.enforce(policy, interpolations);
