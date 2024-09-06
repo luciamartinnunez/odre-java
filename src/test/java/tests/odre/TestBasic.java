@@ -31,15 +31,15 @@ public class TestBasic {
 	private static StringBuilder dir = new StringBuilder("./src/test/resources/basic-experiments/");
 	private static final String EXPECTED_ACTION = "http://www.w3.org/ns/odrl/2/read";
 	private static int numberOfExecutions = 10;
-	
+	private static int warmup = 5;
+
 	private static Map<String, List<Double>> runningTimeResults = new HashMap<>();
 	private static String fileResults = "./results.csv";
 
 	private static boolean experimentalMode = true;
-	private static boolean warmup = true;
-	
+
 	private static String readPolicy(String name) {
-		
+
 		StringBuilder contentBuilder = new StringBuilder();
 		try (Stream<String> stream = Files.lines(Paths.get(dir + name), StandardCharsets.UTF_8)) {
 			stream.forEach(s -> contentBuilder.append(s).append("\n"));
@@ -52,23 +52,23 @@ public class TestBasic {
 	private Map<String, String> enforce(String policy, String name, Map<String, Object> interpolations)
 			throws EnforceException {
 		ODRE odre = new ODRE();
-		name  = "test_"+name;
+		name = "test_" + name;
 		Map<String, String> usage = null;
 		if (experimentalMode) {
+			int iteration = 0;
 			for (int index = 0; index < numberOfExecutions; index++) {
+
 				long start = System.currentTimeMillis();
 				usage = odre.enforce(policy, interpolations);
 				double finish = (System.currentTimeMillis() - start) * 0.001;
-				List<Double> results = runningTimeResults.get(name);
-				if (results == null)
-					results = new ArrayList<>();
-				results.add(finish);
-				runningTimeResults.put(name, results);
-				if(warmup) {
-					//skip first result
-					index -= 1;
-					warmup = false;
-					results.remove(0);
+				if (iteration == warmup) {
+					List<Double> results = runningTimeResults.get(name);
+					if (results == null)
+						results = new ArrayList<>();
+					results.add(finish);
+					runningTimeResults.put(name, results);
+				} else {
+					iteration++;
 				}
 			}
 		} else {
@@ -81,7 +81,7 @@ public class TestBasic {
 	@AfterClass
 	public static void writeCSV() {
 		File r = (new File(fileResults));
-		if(r.exists())
+		if (r.exists())
 			r.delete();
 		int numRows = runningTimeResults.values().iterator().next().size();
 
