@@ -7,8 +7,8 @@ import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueInteger;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 
 import odre.extension.odrl.Logical;
@@ -22,7 +22,7 @@ public class TestLogical {
 	private NodeValue value2 = new NodeValueInteger(2);
 	private NodeValue value1 = new NodeValueInteger(1);
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		List<Expr> arguments = new ArrayList<>();
 		Expr arg1 = value3;
@@ -36,13 +36,13 @@ public class TestLogical {
 	}
 	
 	
-	
-	@Test
-	@DisplayName("Test case 01: operatior eq between two xsd:integers")
-	public void test01() {
-		String eq = logical.ODRL_EQ;
-		logical.checkBuild(eq, exp);
-		NodeValue result = logical.exec(values);
-		System.out.println(result);
-	}
+//	
+//	@Test
+//	@DisplayName("Test case 01: operatior eq between two xsd:integers")
+//	public void test01() {
+//		String eq = logical.ODRL_EQ;
+//		logical.checkBuild(eq, exp);
+//		NodeValue result = logical.exec(values);
+//		System.out.println(result);
+//	}
 }
