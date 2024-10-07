@@ -68,13 +68,13 @@ Map<String, String> usage = odre.enforce(policy, interpolations);
 | [percentage](http://www.w3.org/ns/odrl/2/percentage)                             | unsupported | &cross; |
 | [product](http://www.w3.org/ns/odrl/2/product)                                   | unsupported | &cross; |
 | [purpose](http://www.w3.org/ns/odrl/2/purpose)                                   | unsupported | &cross; |
-| [recipient](hhttp://www.w3.org/ns/odrl/2/recipient)                               | unsupported | &cross; |
+| [recipient](http://www.w3.org/ns/odrl/2/recipient)                               | unsupported | &cross; |
 | [relativePosition](http://www.w3.org/ns/odrl/2/relativePosition)                 | unsupported | &cross; |
 | [relativeSize](http://www.w3.org/ns/odrl/2/relativeSize)                         | unsupported | &cross; |
 | [relativeSpatialPosition](http://www.w3.org/ns/odrl/2/relativeSpatialPosition)   | unsupported | &cross; |
 | [relativeTemporalPosition](http://www.w3.org/ns/odrl/2/relativeTemporalPosition) | unsupported | &cross; |
 | [resolution](http://www.w3.org/ns/odrl/2/resolution)                             | unsupported | &cross; |
-| [spatial](hhttp://www.w3.org/ns/odrl/2/spatial)                                   | unsupported | &cross; |
+| [spatial](http://www.w3.org/ns/odrl/2/spatial)                                   | unsupported | &cross; |
 | [spatialCoordinates](http://www.w3.org/ns/odrl/2/spatialCoordinates)             | unsupported | &cross; |
 | [system](http://www.w3.org/ns/odrl/2/system)                                     | unsupported | &cross; |
 | [systemDevice](http://www.w3.org/ns/odrl/2/systemDevice)                         | unsupported | &cross; |
